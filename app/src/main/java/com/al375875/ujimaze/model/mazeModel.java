@@ -7,7 +7,7 @@ import java.util.Collection;
 public class mazeModel {
 
     private float posX, posY;
-    private boolean moving;
+    private boolean moving, mazeComplete;
     static int SPEED =8;
     String[] maz= new String[]{
             "+-+-+-+-+-+-+-+",
@@ -26,18 +26,21 @@ public class mazeModel {
             "|       |   | |",
             "+-+-+-+-+-+-+-+"};
 
-    Maze maze=new Maze(maz);
+    private Maze maze;
 
     public mazeModel(Context context, int width, int height) {
 
+        maze= new Maze(maz);
+
+        mazeComplete=false;
     }
 
-    public void update(float deltaTime, Direction dir){
+    public void update(float deltaTime){
         if(!isMoving()){
             return;
         }
         else{
-            setCoords(deltaTime, dir);
+            //setCoords(deltaTime);
         }
     }
 
@@ -63,8 +66,8 @@ public class mazeModel {
 
     }
 
-    public String[] getCurrentMaze(){
-            return  maz;
+    public Maze getCurrentMaze(){
+            return  maze;
     }
 
     public void nextMaze(){
@@ -108,11 +111,15 @@ public class mazeModel {
     public boolean targetReached(){
 
         Collection<Position> a= maze.getTargets();
-
+//faltanm cosas
         return true;
     }
 
 
+    public boolean mazeCompleted() {
+        return mazeComplete;
+    }
 
-
+    public void movementDone(Direction dir) {
+    }
 }

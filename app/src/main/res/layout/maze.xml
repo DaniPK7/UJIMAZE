@@ -36,4 +36,13 @@
         app:layout_constraintTop_toTopOf="@+id/imageButton2"
         app:srcCompat="@android:drawable/ic_menu_help" />
 
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,34 +2,54 @@ package com.al375875.ujimaze;
 
 import com.al375875.ujimaze.model.Direction;
 
-enum Gesture{
-    CLICK,
-    NONE,
-    SWIPE;
-}
+
 
 public class GestureDetector {
+
+
+    public enum Gesture{
+        CLICK,
+        NONE,
+        SWIPE;
+    }
 
     int touchX0, touchY0;
     int touchX1, touchY1;
 
     //final int CLICK_THRESHOLD = 10;
-    final int SWIPE_THRESHOLD=100;
-    final int SWIPE_MARGIN=80;
-    final int CLICK_MARGIN=10;
+    private final int SWIPE_THRESHOLD;
+    private final int SWIPE_MARGIN;
+    private final int CLICK_MARGIN;
 
 
     String dir="";
+    private  Direction direction;
 
+    public GestureDetector(int width){
+
+        SWIPE_THRESHOLD=    width/10;
+        SWIPE_MARGIN    =   width/8;
+        CLICK_MARGIN    =   width/10;
+    }
 
     public void onTouchDown(int x, int y){
         touchX0 = x;
         touchY0 = y;
+
+
+
     }
 
-    public void onTouchUp(int x, int y){
-        touchX1 = x;
-        touchY1 = y;
+    public Gesture onTouchUp(int x, int y){
+       /* touchX1 = x;
+        touchY1 = y;*/
+
+       //Gestionar si es swipe, click o none
+        //si es un click
+
+        //swipe
+        //if(Math.abs(x-touchX0)>=SWIPE_THRESHOLD
+        return null;
     }
 
     public  Gesture lastGesture(){
@@ -110,5 +130,9 @@ public class GestureDetector {
        if(dir=="left"){   return Direction.LEFT;    }
        else{   return Direction.RIGHT;    }
 
+    }
+
+    public Direction getDir(){
+        return direction;
     }
 }

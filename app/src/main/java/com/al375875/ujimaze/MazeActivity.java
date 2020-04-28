@@ -23,9 +23,6 @@ public class MazeActivity extends GameActivity {
 
     }
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
 
-    }
 
 }

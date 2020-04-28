@@ -34,7 +34,10 @@ public class Controller implements IGameController {
     public void onUpdate(float deltaTime, List<TouchHandler.TouchEvent> touchEvents) {
         //CODIFICAR VUESTRO JUEGO
         //LLAMANDO A METODOS DEL MODELO
-        dir=Direction.DOWN;
+
+        GestureDetector a= new GestureDetector();
+        Gesture g= a.lastGesture();
+        dir= a.lastDirection();
         model.update(deltaTime, dir);
 
     }

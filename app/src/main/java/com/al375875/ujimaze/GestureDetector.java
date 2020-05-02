@@ -27,7 +27,7 @@ public class GestureDetector {
 
     public GestureDetector(int width){
 
-        SWIPE_THRESHOLD=    width/10;
+        SWIPE_THRESHOLD =   width/10;
         SWIPE_MARGIN    =   width/8;
         CLICK_MARGIN    =   width/10;
     }
@@ -35,9 +35,6 @@ public class GestureDetector {
     public void onTouchDown(int x, int y){
         touchX0 = x;
         touchY0 = y;
-
-
-
     }
 
     public Gesture onTouchUp(int x, int y){
@@ -48,8 +45,22 @@ public class GestureDetector {
         //si es un click
 
         //swipe
-        //if(Math.abs(x-touchX0)>=SWIPE_THRESHOLD
-        return null;
+        if(Math.abs(x-touchX0)>=SWIPE_THRESHOLD && Math.abs(y - touchY0)<=SWIPE_MARGIN){        //Swipe horizontal
+            direction = x < touchX0 ? Direction.LEFT : Direction.RIGHT;
+            return Gesture.SWIPE;
+        }
+
+        else if(Math.abs(y-touchY0)>=SWIPE_THRESHOLD && Math.abs(x - touchX0)<=SWIPE_MARGIN){   //Swipe vertical
+            direction = y < touchY0 ? Direction.UP : Direction.DOWN;
+            return Gesture.SWIPE;
+        }
+
+        else if (Math.abs(x - touchX0)<=CLICK_MARGIN && Math.abs(y-touchY0)<=CLICK_MARGIN){     //Click
+
+            return Gesture.CLICK;
+        }
+        else {return Gesture.NONE;}
+
     }
 
     public  Gesture lastGesture(){

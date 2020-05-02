@@ -121,5 +121,6 @@ public class mazeModel {
     }
 
     public void movementDone(Direction dir) {
+        //moverlo segun la direccion
     }
 }

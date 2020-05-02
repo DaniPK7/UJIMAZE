@@ -107,20 +107,20 @@ public class Controller implements IGameController {
                 float x2 = x1 + cellSide;
 
                 //Dibujar lo que toque
-                if(maze.hasWall(/*posiciones*/,UP)){
+                if(maze.hasWall(/*posiciones*/,UP)){    //Tienes muro encima (horizontal)
                     //dibujas linea
                     graphics.drawLine(x1, y1, x2, y1, lineWidth, LINE_COLOR);
                 }
-                if(maze.hasWall(/*posiciones*/,DOWN)){
+                if(maze.hasWall(/*posiciones*/,DOWN)){  //Tienes muro debajo (horizontal)
                     //dibujas linea
                     graphics.drawLine();
 
                 }
-                if(maze.hasWall(/*posiciones*/,LEFT)){
+                if(maze.hasWall(/*posiciones*/,LEFT)){  //Tienes muro a la izq (vertical)
                     //dibujas linea
                     graphics.drawLine();
                 }
-                if(maze.hasWall(/*posiciones*/,RIGHT)){
+                if(maze.hasWall(/*posiciones*/,RIGHT)){ //Tienes muro a la derecha (vertical)
                     //dibujas linea
                     graphics.drawLine();
 

@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".MazeActivity"
+            android:label="segunda">
+        </activity>
+        <activity
             android:name=".StartActivity"
             android:label="Start">
             <intent-filter>
@@ -19,9 +23,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".MazeActivity">
-        </activity>
+
     </application>
 
 </manifest>

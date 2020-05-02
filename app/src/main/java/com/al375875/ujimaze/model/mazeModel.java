@@ -1,13 +1,14 @@
 package com.al375875.ujimaze.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Collection;
 
 public class mazeModel {
 
     private float posX, posY;
-    private boolean moving, mazeComplete;
+    private boolean moving, mazeComplete, onTarget;
     static int SPEED =8;
     String[] maz= new String[]{
             "+-+-+-+-+-+-+-+",
@@ -32,16 +33,20 @@ public class mazeModel {
 
         maze= new Maze(maz);
 
+        Log.d("model", "Filas: "+maze.getNRows());
+        Log.d("model", "Columnas: "+maze.getNCols());
+
         mazeComplete=false;
+        onTarget=false;
     }
 
     public void update(float deltaTime){
-        if(!isMoving()){
+        /*if(!isMoving()){
             return;
         }
         else{
             //setCoords(deltaTime);
-        }
+        }*/
     }
 
 
@@ -112,7 +117,7 @@ public class mazeModel {
 
         Collection<Position> a= maze.getTargets();
 //faltanm cosas
-        return true;
+        return onTarget;
     }
 
 

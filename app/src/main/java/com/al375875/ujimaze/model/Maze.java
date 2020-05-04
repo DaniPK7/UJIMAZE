@@ -1,5 +1,7 @@
 package com.al375875.ujimaze.model;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.Collection;
@@ -77,6 +79,7 @@ public class Maze {
                 int realCol = 2 * col + 1;
                 if (current.charAt(realCol) == ORIGIN)
                     origin = new Position(row, col);
+                    Log.d("originMaze","Row: "+ row+"Col: "+col );
                 if (current.charAt(realCol) == TARGET)
                     targets.add(new Position(row, col));
                 walls[row][col][UP.ordinal()] = previous.charAt(realCol) != ' ';

@@ -9,6 +9,7 @@ import com.al375875.ujimaze.model.Maze;
 import com.al375875.ujimaze.model.Position;
 import com.al375875.ujimaze.model.mazeModel;
 
+import java.util.Collection;
 import java.util.List;
 
 import es.uji.vj1229.framework.Graphics;
@@ -21,7 +22,8 @@ public class Controller implements IGameController {
 
     //int color = (1 & 0xff) << 24 | (255 & 0xff) << 16 | (102 & 0xff) << 8 | (153 & 0xff);
     private static final int LINE_COLOR = 0xff000000;// 0xff000000;//0xff6666
-    private static final int CIRCLE_COLOR =0xff000000;
+    private static final int CIRCLE_COLOR =0xffff6666;
+    private static final int RECTANGLE_COLOR =0xffffcc00;
 
 
 
@@ -37,8 +39,8 @@ public class Controller implements IGameController {
     Graphics graphics;
     GestureDetector gestureDetector;
 
-    float lineWidth;//= widthPixels * 0.2f;
-    float radio;
+    float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE ;//= widthPixels * 0.2f;
+
 
     //private int cellSide, xOffset, yOffset;
     private float cellSide, xOffset, yOffset;
@@ -87,7 +89,7 @@ public class Controller implements IGameController {
     @Override
     public Bitmap onDrawingRequested() {
         //LLAMANDO A LAS FUNCIONES DE DIBUJO
-        Log.d("porfi", "Pre- pintaó");
+        //Log.d("porfi", "Pre- pintaó");
 
         //Color fondo
         //int[] r={ 0x00ffbf, 0xff00ff, 0x80ff00};
@@ -99,20 +101,59 @@ public class Controller implements IGameController {
 
 
         Maze maze= model.getCurrentMaze();
+        Position player= maze.getOrigin();
+        Collection<Position> tarjet= maze.getTargets();
 
-        radio=lineWidth*2f;
-        Log.d("porfi","caca: "+maze.getOrigin().getRow());
-
-        graphics.drawCircle(maze.getOrigin().getRow(), maze.getOrigin().getCol(), radio, CIRCLE_COLOR);
 
         cellSide= Math.min((widthPixels* porc)/maze.getNCols(), (heightPixels* porc)/maze.getNRows());
+
+
         //cellSide = widthPixels*0.95f/maze.getNCols();
 
 
         xOffset =   (widthPixels-(cellSide*maze.getNCols()))/2; //widthPixels    -   cellSide    *   maze.getNCols();
         yOffset =   (heightPixels-(cellSide*maze.getNRows()))/2;//heightPixels   -   cellSide    *   maze.getNRows();
 
-        lineWidth= cellSide * 0.1f;
+        LINE_WIDTH= cellSide * 0.1f;
+
+        //Player
+        CIRCLE_RADIUS =cellSide/3.5f;
+        float xOrigin   =   xOffset + CIRCLE_RADIUS *   2;//(widthPixels/maze.getNCols())-xOffset/2;
+        float yOrigin   =   yOffset + CIRCLE_RADIUS *   2;//(heightPixels/maze.getNRows()+yOffset/1.65f);
+
+        float nX=player.getCol();      //Valor de nX para Columna de  la X origen jugador     (0 - nCol)
+        float nY=player.getRow();      //Valor de nY para Fila de la Y origen jugador         (0 - nFilas)
+
+        float pCol= nX* cellSide;
+        float pRow= nY* cellSide;
+
+        graphics.drawCircle(xOrigin + pCol , yOrigin + pRow, CIRCLE_RADIUS, CIRCLE_COLOR);
+
+        //Tarjet
+        RECTANGLE_SIDE=cellSide/1.5f;
+
+        float xTarjet   =   xOffset +  RECTANGLE_SIDE/4;// + RECTANGLE_SIDE *  2;
+        float yTarjet   =   yOffset +  RECTANGLE_SIDE/4;
+
+        for(Position t: tarjet){
+
+            float tX=t.getCol();
+            float tY=t.getRow();
+
+            float tCol= tX* cellSide;
+            float tRow= tY* cellSide;
+
+            graphics.drawRect(xTarjet + tCol,yTarjet + tRow, RECTANGLE_SIDE,RECTANGLE_SIDE, RECTANGLE_COLOR);
+            //Log.d("tarjet", "Soy un tarjet en la pos: ("+t.getRow()+", "+ t.getCol()+")");
+        }
+        /*float tX=2;
+        float tY=2;
+
+        float tCol= tX* cellSide;
+        float tRow= tY* cellSide;
+
+        graphics.drawRect(xTarjet + tCol,yTarjet + tRow, RECTANGLE_SIDE,RECTANGLE_SIDE, RECTANGLE_COLOR);*/
+
 
 
        /* Log.d("porfi", "Casi casi pinto");
@@ -165,13 +206,13 @@ public class Controller implements IGameController {
                 }*/
 
                 if (maze.hasWall(i, j, Direction.UP))
-                    graphics.drawLine(x1,y1,x2,y1,lineWidth,LINE_COLOR);
+                    graphics.drawLine(x1,y1,x2,y1,LINE_WIDTH,LINE_COLOR);
                 if (maze.hasWall(i,j, Direction.DOWN))
-                    graphics.drawLine(x1,y2,x2,y2,lineWidth,LINE_COLOR);
+                    graphics.drawLine(x1,y2,x2,y2,LINE_WIDTH,LINE_COLOR);
                 if (maze.hasWall(i,j,Direction.LEFT))
-                    graphics.drawLine(x1,y1,x1,y2,lineWidth,LINE_COLOR);
+                    graphics.drawLine(x1,y1,x1,y2,LINE_WIDTH,LINE_COLOR);
                 if (maze.hasWall(i,j,Direction.RIGHT))
-                    graphics.drawLine(x2,y1,x2,y2,lineWidth,LINE_COLOR);
+                    graphics.drawLine(x2,y1,x2,y2,LINE_WIDTH,LINE_COLOR);
             }
         }
         //Log.d("porfi", "Pintaó");

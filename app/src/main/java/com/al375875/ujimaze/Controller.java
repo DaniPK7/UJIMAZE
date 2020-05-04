@@ -15,18 +15,13 @@ import es.uji.vj1229.framework.Graphics;
 import es.uji.vj1229.framework.IGameController;
 import es.uji.vj1229.framework.TouchHandler;
 
-import static com.al375875.ujimaze.model.Direction.DOWN;
-import static com.al375875.ujimaze.model.Direction.LEFT;
-import static com.al375875.ujimaze.model.Direction.RIGHT;
-import static com.al375875.ujimaze.model.Direction.UP;
-
 
 public class Controller implements IGameController {
 
 
     //int color = (1 & 0xff) << 24 | (255 & 0xff) << 16 | (102 & 0xff) << 8 | (153 & 0xff);
-    private static final int LINE_COLOR = 0x000000;//0xff6666
-    private static final int CIRCLE_COLOR =0x000000;
+    private static final int LINE_COLOR = 0xff000000;// 0xff000000;//0xff6666
+    private static final int CIRCLE_COLOR =0xff000000;
 
 
 
@@ -42,10 +37,11 @@ public class Controller implements IGameController {
     Graphics graphics;
     GestureDetector gestureDetector;
 
-    float lineWidth= widthPixels/2;
-    float radio=widthPixels;
+    float lineWidth;//= widthPixels * 0.2f;
+    float radio;
 
-    private int cellSide, xOffset, yOffset;
+    //private int cellSide, xOffset, yOffset;
+    private float cellSide, xOffset, yOffset;
 
     public Controller(Context ctx, int widthPixels, int heightPixels) {
         this.ctx = ctx;
@@ -94,21 +90,30 @@ public class Controller implements IGameController {
         Log.d("porfi", "Pre- pintaó");
 
         //Color fondo
-        graphics.clear(0xFFFFFF);//0xff6699
+        //int[] r={ 0x00ffbf, 0xff00ff, 0x80ff00};
+        int clearColor=0xFFFFFFFF;
+
+        graphics.clear(clearColor);//0xff6699
+
+        //graphics.drawLine(10, 5, 10, 5, lineWidth, LINE_COLOR);
+
 
         Maze maze= model.getCurrentMaze();
 
-
-
-
+        radio=lineWidth*2f;
+        Log.d("porfi","caca: "+maze.getOrigin().getRow());
 
         graphics.drawCircle(maze.getOrigin().getRow(), maze.getOrigin().getCol(), radio, CIRCLE_COLOR);
 
-        cellSide=(int) Math.min((widthPixels* porc)/maze.getNCols(), (heightPixels* porc)/maze.getNRows());
+        cellSide= Math.min((widthPixels* porc)/maze.getNCols(), (heightPixels* porc)/maze.getNRows());
+        //cellSide = widthPixels*0.95f/maze.getNCols();
 
 
-        xOffset =   widthPixels    -   cellSide    *   maze.getNCols();
-        yOffset =   heightPixels   -   cellSide    *   maze.getNRows();
+        xOffset =   (widthPixels-(cellSide*maze.getNCols()))/2; //widthPixels    -   cellSide    *   maze.getNCols();
+        yOffset =   (heightPixels-(cellSide*maze.getNRows()))/2;//heightPixels   -   cellSide    *   maze.getNRows();
+
+        lineWidth= cellSide * 0.1f;
+
 
        /* Log.d("porfi", "Casi casi pinto");
         Log.d("porfi", "Filas: "+maze.getNRows());
@@ -116,24 +121,32 @@ public class Controller implements IGameController {
 
 
 
-        for (int i =0; i < maze.getNRows();i++){
+        for (int i =0; i < maze.getNRows(); i++){
             //Log.d("porfi", "Recorriendo filas");
 
-            float y1    =   yOffset   *   i   *   cellSide;
+            float y1    =   yOffset   +   i   *   cellSide;
             float y2    =   y1  +   cellSide;
 
             for (int j =0; j < maze.getNCols(); j++){
 
                // Log.d("porfi", "Recorriendo columnas");
 
-                float x1    =   xOffset *   j   *   cellSide;
+                float x1    =   xOffset +   j   *   cellSide;
                 float x2    =   x1  +   cellSide;
 
-                Position pos= new Position(i,j);
+                Position pos= new Position(j,i);
+                /*if(i==5 && j==2){
+                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " UP "+ "Result:"+ maze.hasWall(pos,UP));
+                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " DOWN "+ "Result:"+ maze.hasWall(pos,DOWN));
+                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " LEFT "+ "Result:"+ maze.hasWall(pos,LEFT));
+                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " RIGHT "+ "Result:"+ maze.hasWall(pos,RIGHT));
+                }*/
+
 
                 //Dibujar lo que toque
-                if(maze.hasWall(pos,UP)){    //Tienes muro encima (horizontal)
+                /*if(maze.hasWall(pos,UP)){    //Tienes muro encima (horizontal)
                     //dibujas linea
+
                     graphics.drawLine(x1, y1, x2, y1, lineWidth, LINE_COLOR);
                 }
                 else if(maze.hasWall(pos,DOWN)){  //Tienes muro debajo (horizontal)
@@ -149,9 +162,16 @@ public class Controller implements IGameController {
                     //dibujas linea
                     graphics.drawLine(x2, y1, x2, y2, lineWidth, LINE_COLOR);
 
-                }
+                }*/
 
-
+                if (maze.hasWall(i, j, Direction.UP))
+                    graphics.drawLine(x1,y1,x2,y1,lineWidth,LINE_COLOR);
+                if (maze.hasWall(i,j, Direction.DOWN))
+                    graphics.drawLine(x1,y2,x2,y2,lineWidth,LINE_COLOR);
+                if (maze.hasWall(i,j,Direction.LEFT))
+                    graphics.drawLine(x1,y1,x1,y2,lineWidth,LINE_COLOR);
+                if (maze.hasWall(i,j,Direction.RIGHT))
+                    graphics.drawLine(x2,y1,x2,y2,lineWidth,LINE_COLOR);
             }
         }
         //Log.d("porfi", "Pintaó");

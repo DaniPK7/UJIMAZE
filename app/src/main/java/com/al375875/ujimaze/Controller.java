@@ -16,6 +16,11 @@ import es.uji.vj1229.framework.Graphics;
 import es.uji.vj1229.framework.IGameController;
 import es.uji.vj1229.framework.TouchHandler;
 
+import static com.al375875.ujimaze.model.Direction.DOWN;
+import static com.al375875.ujimaze.model.Direction.LEFT;
+import static com.al375875.ujimaze.model.Direction.RIGHT;
+import static com.al375875.ujimaze.model.Direction.UP;
+
 
 public class Controller implements IGameController {
 
@@ -38,8 +43,12 @@ public class Controller implements IGameController {
     Direction dir;
     Graphics graphics;
     GestureDetector gestureDetector;
+    Maze maze;
+    public Position player;
+    Collection<Position> tarjets;
 
     float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE ;//= widthPixels * 0.2f;
+    float nX,nY;
 
 
     //private int cellSide, xOffset, yOffset;
@@ -54,6 +63,15 @@ public class Controller implements IGameController {
         gestureDetector= new GestureDetector(widthPixels);
 
         model= new mazeModel(ctx, widthPixels, heightPixels);
+
+        maze= model.getCurrentMaze();
+
+        player= maze.getOrigin();
+        tarjets= maze.getTargets();
+
+        /*nX=player.getCol();      //Valor de nX para Columna de  la X origen jugador     (0 a nCol)
+        nY=player.getRow();      //Valor de nY para Fila de la Y origen jugador         (0 a nFilas)*/
+
     }
 
     @Override
@@ -69,16 +87,22 @@ public class Controller implements IGameController {
             }
             else if(event.type == TouchHandler.TouchType.TOUCH_UP){
                 if(gestureDetector.onTouchUp(event.x, event.y) == GestureDetector.Gesture.SWIPE){
-                    //model.movementDone(gestureDetector.getDir());
+                    model.movementDone(gestureDetector.getDir(), player);
                 }
                 else if(gestureDetector.onTouchUp(event.x, event.y)== GestureDetector.Gesture.CLICK){
+                    //Log.d("click", "Click: "+ event.x +", "+ event.y);
+                    if(event.x>450 && event.x<550 && event.y<507){
+                        Log.d("click", "Click: "+ event.x +", "+ event.y);
+                        model.resetMaze(player, tarjets);
+                    }
+                    //nX+=1;
                     //informar al modelo de clicks en algun boton
                     //decir donde se ha hecho el click y gestionarlo en el modelo
                 }
             }
         }
 
-        model.update(deltaTime);
+        //model.update(deltaTime);
 
         if(model.mazeCompleted()){
             //Pasar al siguiente
@@ -89,20 +113,18 @@ public class Controller implements IGameController {
     @Override
     public Bitmap onDrawingRequested() {
         //LLAMANDO A LAS FUNCIONES DE DIBUJO
-        //Log.d("porfi", "Pre- pintaó");
+
 
         //Color fondo
-        //int[] r={ 0x00ffbf, 0xff00ff, 0x80ff00};
+
         int clearColor=0xFFFFFFFF;
 
-        graphics.clear(clearColor);//0xff6699
-
-        //graphics.drawLine(10, 5, 10, 5, lineWidth, LINE_COLOR);
+        graphics.clear(clearColor);
 
 
-        Maze maze= model.getCurrentMaze();
-        Position player= maze.getOrigin();
-        Collection<Position> tarjet= maze.getTargets();
+
+        //Maze maze= model.getCurrentMaze();
+        //tarjets= maze.getTargets();
 
 
         cellSide= Math.min((widthPixels* porc)/maze.getNCols(), (heightPixels* porc)/maze.getNRows());
@@ -121,8 +143,8 @@ public class Controller implements IGameController {
         float xOrigin   =   xOffset + CIRCLE_RADIUS *   2;//(widthPixels/maze.getNCols())-xOffset/2;
         float yOrigin   =   yOffset + CIRCLE_RADIUS *   2;//(heightPixels/maze.getNRows()+yOffset/1.65f);
 
-        float nX=player.getCol();      //Valor de nX para Columna de  la X origen jugador     (0 - nCol)
-        float nY=player.getRow();      //Valor de nY para Fila de la Y origen jugador         (0 - nFilas)
+        nX=player.getCol();      //Valor de nX para Columna de  la X origen jugador     (0 a nCol)
+        nY=player.getRow();      //Valor de nY para Fila de la Y origen jugador         (0 a nFilas)*/
 
         float pCol= nX* cellSide;
         float pRow= nY* cellSide;
@@ -135,7 +157,7 @@ public class Controller implements IGameController {
         float xTarjet   =   xOffset +  RECTANGLE_SIDE/4;// + RECTANGLE_SIDE *  2;
         float yTarjet   =   yOffset +  RECTANGLE_SIDE/4;
 
-        for(Position t: tarjet){
+        for(Position t: tarjets){
 
             float tX=t.getCol();
             float tY=t.getRow();
@@ -143,25 +165,12 @@ public class Controller implements IGameController {
             float tCol= tX* cellSide;
             float tRow= tY* cellSide;
 
+
+            if(model.targetReached(player, t)){ tarjets.remove(t);}
             graphics.drawRect(xTarjet + tCol,yTarjet + tRow, RECTANGLE_SIDE,RECTANGLE_SIDE, RECTANGLE_COLOR);
-            //Log.d("tarjet", "Soy un tarjet en la pos: ("+t.getRow()+", "+ t.getCol()+")");
         }
-        /*float tX=2;
-        float tY=2;
 
-        float tCol= tX* cellSide;
-        float tRow= tY* cellSide;
-
-        graphics.drawRect(xTarjet + tCol,yTarjet + tRow, RECTANGLE_SIDE,RECTANGLE_SIDE, RECTANGLE_COLOR);*/
-
-
-
-       /* Log.d("porfi", "Casi casi pinto");
-        Log.d("porfi", "Filas: "+maze.getNRows());
-        Log.d("porfi", "Columnas: "+maze.getNCols());*/
-
-
-
+        //Muros
         for (int i =0; i < maze.getNRows(); i++){
             //Log.d("porfi", "Recorriendo filas");
 
@@ -170,53 +179,36 @@ public class Controller implements IGameController {
 
             for (int j =0; j < maze.getNCols(); j++){
 
-               // Log.d("porfi", "Recorriendo columnas");
-
                 float x1    =   xOffset +   j   *   cellSide;
                 float x2    =   x1  +   cellSide;
 
-                Position pos= new Position(j,i);
-                /*if(i==5 && j==2){
-                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " UP "+ "Result:"+ maze.hasWall(pos,UP));
-                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " DOWN "+ "Result:"+ maze.hasWall(pos,DOWN));
-                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " LEFT "+ "Result:"+ maze.hasWall(pos,LEFT));
-                    Log.d("debug", "Fila: "+i+" Columna: "+ j + " RIGHT "+ "Result:"+ maze.hasWall(pos,RIGHT));
-                }*/
+                Position pos= new Position(i,j);
 
 
                 //Dibujar lo que toque
-                /*if(maze.hasWall(pos,UP)){    //Tienes muro encima (horizontal)
-                    //dibujas linea
 
-                    graphics.drawLine(x1, y1, x2, y1, lineWidth, LINE_COLOR);
-                }
-                else if(maze.hasWall(pos,DOWN)){  //Tienes muro debajo (horizontal)
-                    //dibujas linea
-                    graphics.drawLine(x1, y2, x2, y2, lineWidth, LINE_COLOR);
-
-                }
-                else if(maze.hasWall(pos,LEFT)){  //Tienes muro a la izq (vertical)
-                    //dibujas linea
-                    graphics.drawLine(x1, y1, x1, y2, lineWidth, LINE_COLOR);
-                }
-                else if(maze.hasWall(pos,RIGHT)){ //Tienes muro a la derecha (vertical)
-                    //dibujas linea
-                    graphics.drawLine(x2, y1, x2, y2, lineWidth, LINE_COLOR);
-
-                }*/
-
-                if (maze.hasWall(i, j, Direction.UP))
+                if (maze.hasWall(pos, UP)){                                 //Tienes muro encima (horizontal)
                     graphics.drawLine(x1,y1,x2,y1,LINE_WIDTH,LINE_COLOR);
-                if (maze.hasWall(i,j, Direction.DOWN))
+                }
+
+                if (maze.hasWall(pos, DOWN)){                               //Tienes muro debajo (horizontal)
                     graphics.drawLine(x1,y2,x2,y2,LINE_WIDTH,LINE_COLOR);
-                if (maze.hasWall(i,j,Direction.LEFT))
+                }
+
+                if (maze.hasWall(pos,LEFT)){                                //Tienes muro a la izq (vertical)
                     graphics.drawLine(x1,y1,x1,y2,LINE_WIDTH,LINE_COLOR);
-                if (maze.hasWall(i,j,Direction.RIGHT))
+                }
+
+                if (maze.hasWall(pos,RIGHT)){                               //Tienes muro a la derecha (vertical)
                     graphics.drawLine(x2,y1,x2,y2,LINE_WIDTH,LINE_COLOR);
+                }
             }
         }
-        //Log.d("porfi", "Pintaó");
 
         return graphics.getFrameBuffer();
+    }
+
+    public Position getPlayer() {
+        return player;
     }
 }

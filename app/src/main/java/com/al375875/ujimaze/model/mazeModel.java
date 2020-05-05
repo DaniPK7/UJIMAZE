@@ -3,13 +3,29 @@ package com.al375875.ujimaze.model;
 import android.content.Context;
 import android.util.Log;
 
+import com.al375875.ujimaze.Controller;
+
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static com.al375875.ujimaze.model.Direction.RIGHT;
 
 public class mazeModel {
 
+    Controller c;
+
     private float posX, posY;
+    private Position posOrigin;
+    private Set<Position> tarjetsOrigin;
+
+
     private boolean moving, mazeComplete, onTarget;
     static int SPEED =8;
+
+
     String[] maz= new String[]
             {
                     "+-+-+-+-+-+-+-+",
@@ -29,12 +45,48 @@ public class mazeModel {
                     "+-+-+-+-+-+-+-+"
 
             };
+    String[] maz2= new String[]
+            {
+                    "+-+-+-+-+-+-+-+",
+                    "| |     |     |",      //
+                    "+ + +-+ +   +-+",
+                    "|      X      |",      //
+                    "+     +     + +",
+                    "|     |O    | |",      //
+                    "+ +-+ + + + + +",
+                    "|       | |   |",      //
+                    "+      -+ +  -+",
+                    "|             |",      //
+                    "+-+ + + +-+   +",
+                    "|   |X|       |",      //
+                    "+   +-+ +   + +",
+                    "|       |   | |",      //
+                    "+-+-+-+-+-+-+-+"
+
+
+            };
+
+
 
     private Maze maze;
+    private List<String[]> mazes= Arrays.asList(maz,maz2);
 
     public mazeModel(Context context, int width, int height) {
 
-        maze= new Maze(maz);
+        /*mazes.add(maz);
+        mazes.add(maz2);*/
+
+        maze= new Maze(mazes.get(1));
+        posOrigin= new Position( maze.getOrigin());
+
+        tarjetsOrigin= new HashSet<>();
+
+        for(Position p  :   maze.getTargets()){
+            Log.d("tarjetsO","P: "+ p.toString());
+            tarjetsOrigin.add(p);
+        }
+
+
 
         Log.d("model", "Filas: "+maze.getNRows());
         Log.d("model", "Columnas: "+maze.getNCols());
@@ -44,12 +96,12 @@ public class mazeModel {
     }
 
     public void update(float deltaTime){
-        /*if(!isMoving()){
+        if(!isMoving()){
             return;
         }
         else{
             //setCoords(deltaTime);
-        }*/
+        }
     }
 
 
@@ -59,18 +111,25 @@ public class mazeModel {
 
         else if (dir == Direction.DOWN) { posY = posY - (t*SPEED) ; }
 
-        else if (dir == Direction.RIGHT){ posX = posX + (t*SPEED) ; }
+        else if (dir == RIGHT){ posX = posX + (t*SPEED) ; }
 
         else if (dir == Direction.LEFT){ posX = posX - (t*SPEED) ; }
 
-        targetReached();
+        //targetReached();
 
     }
 
 
 
     // Maze
-    public void resetMaze(){
+    public void resetMaze(Position playerP, Collection<Position> t){
+        Log.d("reset","Or: "+ posOrigin + " Tarjets: "+tarjetsOrigin.size());
+        //Position or= maze.getOrigin();
+        playerP.set(posOrigin);
+
+        for(Position p  :  tarjetsOrigin){
+            t.add(p);
+        }
 
     }
 
@@ -116,10 +175,20 @@ public class mazeModel {
 
     }
 
-    public boolean targetReached(){
+    public boolean targetReached(Position playerPos, Position tarjetPos){
 
-        Collection<Position> a= maze.getTargets();
+        /*Collection<Position> tarjetsPos= maze.getTargets();
+
+        for(Position t: tarjetsPos){
+            if(player == t){
+                maze.
+            }
+
+        }*/
 //faltanm cosas
+        if(playerPos.getCol() == tarjetPos.getCol() && playerPos.getRow() == tarjetPos.getRow() ) {onTarget=true;}
+        else{onTarget=false;}
+
         return onTarget;
     }
 
@@ -128,7 +197,17 @@ public class mazeModel {
         return mazeComplete;
     }
 
-    public void movementDone(Direction dir) {
+    public void movementDone(Direction dir, Position player) {
         //moverlo segun la direccion
+        Log.d("swipe", "funco");
+
+        while(!maze.hasWall(player,dir)){
+            moving =true;
+            player.move(dir);
+        }
+        //targetReached(player);
+        moving =false;
+
+
     }
 }

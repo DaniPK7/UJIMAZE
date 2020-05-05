@@ -114,10 +114,6 @@ public class Position {
         row += direction.getRow();
         col += direction.getCol();
     }
-    public void moveSoft(Direction direction) {
-        row += /*direction.getRow()*/0.5f;
-        col += /*direction.getCol()*/0.5f;
-    }
 
     @NonNull
     @Override

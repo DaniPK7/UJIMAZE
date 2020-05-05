@@ -3,30 +3,25 @@ package com.al375875.ujimaze.model;
 import android.content.Context;
 import android.util.Log;
 
-import com.al375875.ujimaze.Controller;
-
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import static com.al375875.ujimaze.model.Direction.RIGHT;
 
 public class mazeModel {
 
-    Controller c;
+
 
     private float posX, posY;
     private Position posOrigin;
     private Set<Position> tarjetsOrigin;
 
+    public int currentLvl=0;
 
     private boolean moving, mazeComplete, onTarget;
-    static int SPEED =8;
+    static float SPEED =2;
 
 
-    String[] maz= new String[]
+    static String[] maz= new String[]
             {
                     "+-+-+-+-+-+-+-+",
                     "| |     |     |",
@@ -45,85 +40,153 @@ public class mazeModel {
                     "+-+-+-+-+-+-+-+"
 
             };
-    String[] maz2= new String[]
+    static String[] solMaz= new String[]
             {
                     "+-+-+-+-+-+-+-+",
-                    "| |     |     |",      //
+                    "| |     |     |",      //⟵
                     "+ + +-+ +   +-+",
-                    "|      X      |",      //
-                    "+     +     + +",
-                    "|     |O    | |",      //
+                    "|        O    |",      //⟵
+                    "+ + + + + + + +",
+                    "|     |     | |",      //⟵
                     "+ +-+ + + + + +",
-                    "|       | |   |",      //
+                    "|       | |   |",      //⟵
                     "+      -+ +  -+",
-                    "|             |",      //
+                    "|             |",      //⟵
                     "+-+ + + +-+   +",
-                    "|   |X|       |",      //
+                    "|   |X|       |",      //⟵
                     "+   +-+ +   + +",
-                    "|       |   | |",      //
+                    "|       |   | |",      //⟵
                     "+-+-+-+-+-+-+-+"
+                    //        ^ ^ ^ ^ ^ ^ ^
+                    //        | | | | | | |
 
+            };
+    static String[] maz1= new String[]
+            {
+                    "+-+-+-+-+-+-+-+",
+                    "|             |",      //⟵
+                    "+ + + + + + + +",
+                    "|             |",      //⟵
+                    "+-+ + + + + + +",
+                    "|O  |         |",      //⟵
+                    "+-+ + +-+ +-+ +",
+                    "|     |      X|",      //⟵
+                    "+ + + + + + +-+",
+                    "|             |",      //⟵
+                    "+ + + + + + +-+",
+                    "|     |       |",      //⟵
+                    "+ +-+ + + + + +",
+                    "|X|           |",      //⟵
+                    "+-+-+-+-+-+-+-+"
+            //        ^ ^ ^ ^ ^ ^ ^
+            //        | | | | | | |
+            };
 
+    static String[] maz2= new String[]
+            {
+                    "+-+-+-+-+-+-+-+",
+                    "| |X|    |    |",      //⟵
+                    "+ + +-+ +   +-+",
+                    "| |           |",      //⟵
+                    "+     +     + +",
+                    "|     |O    | |",      //⟵
+                    "+ +-+ + + + + +",
+                    "|     | | |   |",      //⟵
+                    "+      -+ +  -+",
+                    "|             |",      //⟵
+                    "+-+ + + +-+   +",
+                    "|   |X|       |",      //⟵
+                    "+   +-+ +   + +",
+                    "|       |   | |",      //⟵
+                    "+-+-+-+-+-+-+-+"
+                    //        ^ ^ ^ ^ ^ ^ ^
+                    //        | | | | | | |
             };
 
 
 
     private Maze maze;
-    private List<String[]> mazes= Arrays.asList(maz,maz2);
+    //private String[][] templates =Arrays.asList(maz,maz2,maz3);
+
+    private static final String[][] templates ={solMaz,maz,maz1,maz2} ;
+
+    public static final Maze mazes[];
+    static {
+        mazes = new Maze[templates.length];
+        int i = 0;
+        for (String[] template: templates) {
+            mazes[i++] = new Maze(template);
+        }
+    }
+
 
     public mazeModel(Context context, int width, int height) {
 
         /*mazes.add(maz);
         mazes.add(maz2);*/
 
-        maze= new Maze(mazes.get(1));
+        //maze= new Maze(templates.get(0));
+        maze = mazes[currentLvl];
         posOrigin= new Position( maze.getOrigin());
 
         tarjetsOrigin= new HashSet<>();
 
         for(Position p  :   maze.getTargets()){
-            Log.d("tarjetsO","P: "+ p.toString());
+            //Log.d("tarjetsO","P: "+ p.toString());
             tarjetsOrigin.add(p);
         }
 
 
 
-        Log.d("model", "Filas: "+maze.getNRows());
-        Log.d("model", "Columnas: "+maze.getNCols());
+        //Log.d("model", "Filas: "+maze.getNRows());
+        //Log.d("model", "Columnas: "+maze.getNCols());
 
         mazeComplete=false;
         onTarget=false;
     }
 
-    public void update(float deltaTime){
+    public void update(float deltaTime, Direction dir){
+
+
         if(!isMoving()){
             return;
         }
         else{
-            //setCoords(deltaTime);
+            //setCoords(deltaTime, dir);
         }
     }
 
 
     public void setCoords(float t, Direction dir){
 
-        if (dir == Direction.UP){ posY = posY + (t*SPEED) ; }
 
-        else if (dir == Direction.DOWN) { posY = posY - (t*SPEED) ; }
+        Log.d("setCoords", "Col: "+ maze.getOrigin().getCol());
+        //maze.getOrigin().setCol(maze.getOrigin().getCol()-1);
+        Log.d("setCoords", "Col post: "+ maze.getOrigin().getCol());
 
-        else if (dir == RIGHT){ posX = posX + (t*SPEED) ; }
+        posX=maze.getOrigin().getCol();
+        posY=maze.getOrigin().getRow();
 
-        else if (dir == Direction.LEFT){ posX = posX - (t*SPEED) ; }
+        while(isMoving()){
+            if      (dir == Direction.UP)   { posY = posY - (t * SPEED); }
+            else if (dir == Direction.DOWN) { posY = posY + (t * SPEED); }
+            else if (dir == Direction.RIGHT){ posX = posX + (t * SPEED); }
+            else if (dir == Direction.LEFT) { posX = posX - (t * SPEED); }
 
-        //targetReached();
+        maze.getOrigin().setCol((int)posX);
+        maze.getOrigin().setRow((int)posY);
 
+        Position p=new Position((int)posX,(int)posY);
+        if(maze.hasWall(p,dir)){moving=false;}
+        }
     }
+        //targetReached();
 
 
 
     // Maze
     public void resetMaze(Position playerP, Collection<Position> t){
-        Log.d("reset","Or: "+ posOrigin + " Tarjets: "+tarjetsOrigin.size());
+        //Log.d("reset","Or: "+ posOrigin + " Tarjets: "+tarjetsOrigin.size());
         //Position or= maze.getOrigin();
         playerP.set(posOrigin);
 
@@ -138,6 +201,9 @@ public class mazeModel {
     }
 
     public void nextMaze(){
+
+        currentLvl+=1;
+        maze = mazes[currentLvl];
 
     }
     public void returnTargetPos(){
@@ -186,7 +252,9 @@ public class mazeModel {
 
         }*/
 //faltanm cosas
-        if(playerPos.getCol() == tarjetPos.getCol() && playerPos.getRow() == tarjetPos.getRow() ) {onTarget=true;}
+
+        //Log.d("tarRes","PC: "+playerPos.getCol()+" PR: "+ playerPos.getRow()+" JC: "+tarjetPos.getCol()+" JR: "+tarjetPos.getRow());
+        if((playerPos.getCol() == tarjetPos.getCol()) && (playerPos.getRow() == tarjetPos.getRow()) ) {onTarget=true;}
         else{onTarget=false;}
 
         return onTarget;
@@ -198,16 +266,20 @@ public class mazeModel {
     }
 
     public void movementDone(Direction dir, Position player) {
+
         //moverlo segun la direccion
-        Log.d("swipe", "funco");
+        //Log.d("swipe", "funco");
 
         while(!maze.hasWall(player,dir)){
             moving =true;
             player.move(dir);
+
         }
         //targetReached(player);
         moving =false;
 
 
     }
+
+
 }

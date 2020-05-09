@@ -10,7 +10,7 @@ import java.util.Set;
 public class mazeModel {
 
 
-
+    private final int pixelWidth , heightPixels;
     private float posX, posY;
     private Position posOrigin;
     private Position postMovePosition;
@@ -123,6 +123,8 @@ public class mazeModel {
 
 
     public mazeModel(Context context, int width, int height) {
+        this.pixelWidth=width;
+        this.heightPixels=height;
 
         /*mazes.add(maz);
         mazes.add(maz2);*/
@@ -327,7 +329,7 @@ public class mazeModel {
     }
 
 
-    public void ClickManagement(int x, int y, Position player, Collection<Position> tarjets)
+    public void ClickManagement(int x, int y, float yOffset, float DRAWABLE_SCALE, Position player, Collection<Position> tarjets)
     {
         Maze tempMaze= new Maze(templates[currentLvl]);
 
@@ -342,11 +344,27 @@ public class mazeModel {
 
 
         Log.d("click", "Click: "+ x +", "+y);
-        if(x>420 && x<620 && y<375){
+        //Reset
+        float rxMin= pixelWidth/2-DRAWABLE_SCALE/1.65f;
+        float rxMax= pixelWidth/2+DRAWABLE_SCALE/1.65f;
+        //Hint
+        float hxMin= 3*pixelWidth/4-DRAWABLE_SCALE/1.65f;
+        float hxMax= 3*pixelWidth/4+DRAWABLE_SCALE/1.65f;
+
+        float yMax=  yOffset/2 + DRAWABLE_SCALE/1.55f;
+        float yMin=  yOffset/2 - DRAWABLE_SCALE/1.55f;
+
+
+
+
+        float h= yOffset;
+        Log.d("click","hXMin "+ hxMin);
+
+        if(x>rxMin && x<rxMax && y> yMin && y < yMax){        //Reset
 
             resetMaze(player, tarjets, o, resetTarjets);
         }
-        if(x>747 && x<888 && y<375){
+        if(x>hxMin && x<hxMax && y > yMin && y < yMax){         //Hint
 
             showPath();
         }

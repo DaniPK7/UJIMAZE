@@ -49,7 +49,7 @@ public class Controller implements IGameController {
     Collection<Position> tarjets;
 
 
-    float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE, DRAWABLE_SCALE, DRAWABLE_HEIGHT  ;//= widthPixels * 0.2f;
+    float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE, DRAWABLE_SCALE  ;//= widthPixels * 0.2f;
 
 
     float nX,nY;
@@ -99,7 +99,7 @@ public class Controller implements IGameController {
                 }
                 else if(gestureDetector.onTouchUp(event.x, event.y)== GestureDetector.Gesture.CLICK){
 
-                    model.ClickManagement(event.x, event.y, player, tarjets);
+                    model.ClickManagement(event.x, event.y, yOffset, DRAWABLE_SCALE, player, tarjets);
                     /*if(event.x>420 && event.x<620 && event.y<407){
                         //Log.d("click", "Click: "+ x +", "+y);
                         model.resetMaze(player, tarjets);
@@ -147,17 +147,17 @@ public class Controller implements IGameController {
 
         //boton reset
         //graphics.drawRect(0, 0, widthPixels+1, yOffset-LINE_WIDTH/2, 0xff4499b8);
-        graphics.drawRect(widthPixels/2-64, yOffset/2 - 64, DRAWABLE_SCALE, DRAWABLE_SCALE, 0xffff0000);
+        //graphics.drawRect(widthPixels/2-64, yOffset/2 - 64, DRAWABLE_SCALE, DRAWABLE_SCALE, 0xffff0000);
         Drawable resetButton = ctx.getDrawable(R.drawable.reset);
-        graphics.drawDrawable(resetButton , widthPixels/2-64,yOffset/2 - 64,DRAWABLE_SCALE,DRAWABLE_SCALE);
+        graphics.drawDrawable(resetButton , widthPixels/2-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
 
         //boton help
         Drawable helpButton = ctx.getDrawable(R.drawable.help);
-        graphics.drawDrawable(helpButton , (3*widthPixels/4)-64,yOffset/2 - 64,DRAWABLE_SCALE,DRAWABLE_SCALE);
+        graphics.drawDrawable(helpButton , (3*widthPixels/4)-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
 
         //boton undo
-        Drawable undoButton = ctx.getDrawable(R.drawable.help);
-        graphics.drawDrawable(undoButton , (widthPixels/4)-64,yOffset/2 - 64,DRAWABLE_SCALE,DRAWABLE_SCALE);
+        Drawable undoButton = ctx.getDrawable(R.drawable.undo);
+        graphics.drawDrawable(undoButton , (widthPixels/4)-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
 
         //cellSide = widthPixels*0.95f/maze.getNCols();
 

@@ -2,7 +2,7 @@ package com.al375875.ujimaze;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.graphics.drawable.Drawable;
 
 import com.al375875.ujimaze.model.Direction;
 import com.al375875.ujimaze.model.Maze;
@@ -43,11 +43,15 @@ public class Controller implements IGameController {
     Direction dir;
     Graphics graphics;
     GestureDetector gestureDetector;
-    Maze maze, mazeSolution;
+    Maze maze;
+    String[] mazeSolution;
     public Position player;
     Collection<Position> tarjets;
 
-    float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE ;//= widthPixels * 0.2f;
+
+    float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE, DRAWABLE_SCALE, DRAWABLE_HEIGHT  ;//= widthPixels * 0.2f;
+
+
     float nX,nY;
 
 
@@ -63,6 +67,8 @@ public class Controller implements IGameController {
         gestureDetector= new GestureDetector(widthPixels);
 
         model= new mazeModel(ctx, widthPixels, heightPixels);
+
+        mazeSolution= model.getCurrentSolution();
 
 
 
@@ -88,15 +94,18 @@ public class Controller implements IGameController {
                     //model.setCoords(deltaTime, gestureDetector.getDir());
 
                     model.movementDone(gestureDetector.getDir(), player);
-                    //model.update(deltaTime, gestureDetector.getDir());
+
+                   // model.update(deltaTime, gestureDetector.getDir());
                 }
                 else if(gestureDetector.onTouchUp(event.x, event.y)== GestureDetector.Gesture.CLICK){
 
-                    Log.d("click", "Click: "+ event.x +", "+ event.y);
-                    if(event.x>420 && event.x<620 && event.y<407){
-                        Log.d("click", "Click: "+ event.x +", "+ event.y);
+                    model.ClickManagement(event.x, event.y, player, tarjets);
+                    /*if(event.x>420 && event.x<620 && event.y<407){
+                        //Log.d("click", "Click: "+ x +", "+y);
                         model.resetMaze(player, tarjets);
-                    }
+                    }*/
+
+
                     //nX+=1;
                     //informar al modelo de clicks en algun boton
                     //decir donde se ha hecho el click y gestionarlo en el modelo
@@ -134,9 +143,21 @@ public class Controller implements IGameController {
 
         cellSide= Math.min((widthPixels* porc)/maze.getNCols(), (heightPixels* porc)/maze.getNRows());
 
-        //boton reset
-        graphics.drawRect(420 , 205, cellSide*1.5f, cellSide*1.5f, 0xff4499b8);
+        DRAWABLE_SCALE =widthPixels/8;
 
+        //boton reset
+        //graphics.drawRect(0, 0, widthPixels+1, yOffset-LINE_WIDTH/2, 0xff4499b8);
+        graphics.drawRect(widthPixels/2-64, yOffset/2 - 64, DRAWABLE_SCALE, DRAWABLE_SCALE, 0xffff0000);
+        Drawable resetButton = ctx.getDrawable(R.drawable.reset);
+        graphics.drawDrawable(resetButton , widthPixels/2-64,yOffset/2 - 64,DRAWABLE_SCALE,DRAWABLE_SCALE);
+
+        //boton help
+        Drawable helpButton = ctx.getDrawable(R.drawable.help);
+        graphics.drawDrawable(helpButton , (3*widthPixels/4)-64,yOffset/2 - 64,DRAWABLE_SCALE,DRAWABLE_SCALE);
+
+        //boton undo
+        Drawable undoButton = ctx.getDrawable(R.drawable.help);
+        graphics.drawDrawable(undoButton , (widthPixels/4)-64,yOffset/2 - 64,DRAWABLE_SCALE,DRAWABLE_SCALE);
 
         //cellSide = widthPixels*0.95f/maze.getNCols();
 
@@ -148,11 +169,11 @@ public class Controller implements IGameController {
 
         //Player
         CIRCLE_RADIUS =cellSide/3.5f;
-        float xOrigin   =   xOffset + CIRCLE_RADIUS *   2;//(widthPixels/maze.getNCols())-xOffset/2;
-        float yOrigin   =   yOffset + CIRCLE_RADIUS *   2;//(heightPixels/maze.getNRows()+yOffset/1.65f);
+        float xOrigin   =   xOffset + cellSide/2;//(widthPixels/maze.getNCols())-xOffset/2;
+        float yOrigin   =   yOffset + cellSide/2;//(heightPixels/maze.getNRows()+yOffset/1.65f);
 
-        nX=player.getCol();      //Valor de nX para Columna de  la X origen jugador     (0 a nCol)
-        nY=player.getRow();      //Valor de nY para Fila de la Y origen jugador         (0 a nFilas)*/
+        nX= player.getCol();      //Valor de nX para Columna de  la X origen jugador     (0 a nCol)
+        nY= player.getRow();      //Valor de nY para Fila de la Y origen jugador         (0 a nFilas)*/
 
         float pCol= nX* cellSide;
         float pRow= nY* cellSide;
@@ -223,31 +244,73 @@ public class Controller implements IGameController {
                 }
             }
         }
-        drawSolution();
+
+        if(model.Hint){drawSolution();}
 
         return graphics.getFrameBuffer();
     }
 
     void drawSolution(){
-        int n=5;    //fila  realdeseada
+       /* int n=5;    //fila  real deseada
         int fila= (n*2)+1;
         float x1    =   xOffset +   4   *   cellSide;
         float y1    =   yOffset +     fila *  (cellSide/2);
 
-        graphics.drawLine(x1-cellSide/2,y1,x1+cellSide/2,y1,LINE_WIDTH,0xffe3d084);
+        graphics.drawLine(x1-cellSide/2,y1,x1+cellSide/2,y1,LINE_WIDTH,0xffe3d084);*/
 
 
-        /*for (int i =0; i < mazeSolution.getNRows(); i++){            //Log.d("porfi", "Recorriendo filas");
+        for (int i =0; i < mazeSolution.length; i++){
+            float y1    =   yOffset +   i   *   cellSide;
 
-            //float y1    =   yOffset   +   i   *   cellSide;
+            for (int j =0; j < mazeSolution[i].length(); j++){
 
-            for (int j =0; j < mazeSolution.getNCols(); j++){
+                int fila= j;
+                float x1    =   xOffset +     fila *  (cellSide/2);
 
-                //float x1    =   xOffset +   j   *   cellSide;
-                Position pos= new Position(i,j);
-                mazeSolution
+               //Log.d("drawSol","Fila: "+i+" Columna: "+j+" Char: "+ mazeSolution[i].charAt(j));
+                if(mazeSolution[i].charAt(j)=='r')
+                {
 
-            }*/
+                    //Log.d("drawSol","Sol"+"X: "+x1+" Y: "+y1);
+
+                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+
+                }
+                if(mazeSolution[i].charAt(j)=='l')
+                {
+
+                    //Log.d("drawSol","Sol"+"X: "+x1+" Y: "+y1);
+
+                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+
+                }
+                if(mazeSolution[i].charAt(j)=='d')
+                {
+
+                    //Log.d("drawSol","Sol"+"X: "+x1+" Y: "+y1);
+
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
+
+                }
+                if(mazeSolution[i].charAt(j)=='u')
+                {
+
+                    //Log.d("drawSol","Sol"+"X: "+x1+" Y: "+y1);
+
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
+
+                }
+                if(mazeSolution[i].charAt(j)=='c')
+                {
+                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
+
+                }
+
+            }
+        }
 
 
     }

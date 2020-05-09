@@ -13,9 +13,11 @@ public class mazeModel {
 
     private float posX, posY;
     private Position posOrigin;
+    private Position postMovePosition;
     private Set<Position> tarjetsOrigin;
 
     public int currentLvl=0;
+    public boolean Hint;
 
     private boolean moving, mazeComplete, onTarget;
     static float SPEED =2;
@@ -43,14 +45,14 @@ public class mazeModel {
     static String[] solMaz= new String[]
             {
                     "+-+-+-+-+-+-+-+",
-                    "| |     |     |",      //⟵
-                    "+ + +-+ +   +-+",
-                    "|        O    |",      //⟵
-                    "+ + + + + + + +",
-                    "|     |     | |",      //⟵
-                    "+ +-+ + + + + +",
-                    "|       | |   |",      //⟵
-                    "+      -+ +  -+",
+                    "| |r r d|     |",      //⟵
+                    "+ +u+-+d+r+r+d+",
+                    "|  u l d O   d|",      //⟵
+                    "+ +d+c+ +-+d+l+",
+                    "|  d d|    d| |",      //⟵
+                    "+d+l+ +r+d+d+ +",
+                    "|r r r u| |l  |",      //⟵
+                    "+       + +  -+",
                     "|             |",      //⟵
                     "+-+ + + +-+   +",
                     "|   |X|       |",      //⟵
@@ -108,7 +110,7 @@ public class mazeModel {
     private Maze maze;
     //private String[][] templates =Arrays.asList(maz,maz2,maz3);
 
-    private static final String[][] templates ={solMaz,maz,maz1,maz2} ;
+    private static final String[][] templates ={maz,maz1,maz2} ;
 
     public static final Maze mazes[];
     static {
@@ -128,6 +130,8 @@ public class mazeModel {
         //maze= new Maze(templates.get(0));
         maze = mazes[currentLvl];
         posOrigin= new Position( maze.getOrigin());
+        posX= posOrigin.getRow();
+        posY= posOrigin.getCol();
 
         tarjetsOrigin= new HashSet<>();
 
@@ -143,31 +147,62 @@ public class mazeModel {
 
         mazeComplete=false;
         onTarget=false;
+        Hint=false;
     }
 
     public void update(float deltaTime, Direction dir){
 
 
+        //Calcular pos final
+       /* Position currentPlayerPos= new Position(maze.getOrigin().getRow(),maze.getOrigin().getCol());   //la posicion del jugador en la matriz
+
+        postMovePosition= calculateFinalPos(posOrigin,dir);
+        Log.d("updateModel", "PlayerPos "+ maze.getOrigin().toString()+"postMovePos: "+ posX);
+
+        while((int)posX != postMovePosition.getRow() || (int)posY != postMovePosition.getCol() )
+        {
+            Log.d("updateModel", "PlayerPos "+ posX);
+            moving=true;
+            setCoords(deltaTime, dir);
+        }
+
+
+       /*
         if(!isMoving()){
-            return;
+           return;
         }
         else{
             //setCoords(deltaTime, dir);
+        }*/
+    }
+
+    public Position calculateFinalPos(Position pos, Direction dir)
+    {
+        Position temp= pos;
+        Position finalPos;
+
+        while(!maze.hasWall(temp,dir)){
+            moving =true;
+            temp.move(dir);
+
         }
+        finalPos= temp;
+        return finalPos;
     }
 
 
     public void setCoords(float t, Direction dir){
 
+        if      (dir == Direction.UP)   { posY = posY - (t * SPEED); }
+        else if (dir == Direction.DOWN) { posY = posY + (t * SPEED); }
+        else if (dir == Direction.RIGHT){ posX = posX + (t * SPEED); }
+        else if (dir == Direction.LEFT) { posX = posX - (t * SPEED); }
 
-        Log.d("setCoords", "Col: "+ maze.getOrigin().getCol());
-        //maze.getOrigin().setCol(maze.getOrigin().getCol()-1);
-        Log.d("setCoords", "Col post: "+ maze.getOrigin().getCol());
+        /*maze.getOrigin().move(dir);
+        maze.getOrigin().move(dir);*/
 
-        posX=maze.getOrigin().getCol();
-        posY=maze.getOrigin().getRow();
-
-        while(isMoving()){
+/*
+        while(moving){
             if      (dir == Direction.UP)   { posY = posY - (t * SPEED); }
             else if (dir == Direction.DOWN) { posY = posY + (t * SPEED); }
             else if (dir == Direction.RIGHT){ posX = posX + (t * SPEED); }
@@ -178,19 +213,25 @@ public class mazeModel {
 
         Position p=new Position((int)posX,(int)posY);
         if(maze.hasWall(p,dir)){moving=false;}
-        }
+        }*/
+
+
     }
         //targetReached();
 
 
 
     // Maze
-    public void resetMaze(Position playerP, Collection<Position> t){
+    public void resetMaze(Position playerP, Collection<Position> t, Position origin, Collection<Position> resetTarjets){
         //Log.d("reset","Or: "+ posOrigin + " Tarjets: "+tarjetsOrigin.size());
         //Position or= maze.getOrigin();
-        playerP.set(posOrigin);
+        //posOrigin= new Position( maze.getOrigin());
+        playerP.set(origin);
+        //t=resetTarjets;
 
-        for(Position p  :  tarjetsOrigin){
+
+
+        for(Position p  :  resetTarjets){
             t.add(p);
         }
 
@@ -198,6 +239,10 @@ public class mazeModel {
 
     public Maze getCurrentMaze(){
             return  maze;
+    }
+    public String[] getCurrentSolution()
+    {
+        return solMaz;
     }
 
     public void nextMaze(){
@@ -282,4 +327,36 @@ public class mazeModel {
     }
 
 
+    public void ClickManagement(int x, int y, Position player, Collection<Position> tarjets)
+    {
+        Maze tempMaze= new Maze(templates[currentLvl]);
+
+        Position o= new Position(tempMaze.getOrigin());
+
+        Set<Position>resetTarjets= new HashSet<>();
+
+        for(Position p  :   tempMaze.getTargets()){
+            //Log.d("tarjetsO","P: "+ p.toString());
+            resetTarjets.add(p);
+        }
+
+
+        Log.d("click", "Click: "+ x +", "+y);
+        if(x>420 && x<620 && y<375){
+
+            resetMaze(player, tarjets, o, resetTarjets);
+        }
+        if(x>747 && x<888 && y<375){
+
+            showPath();
+        }
+    }
+
+    private void showPath()
+    {
+        boolean r= Hint? false : true;
+        Hint=r;
+
+        Log.d("click", "Pista");
+    }
 }

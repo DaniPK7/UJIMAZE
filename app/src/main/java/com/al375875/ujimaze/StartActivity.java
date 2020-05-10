@@ -19,9 +19,10 @@ public class StartActivity extends Activity {
     }
 
     public void startGame(View view) {
-        Intent intent= new Intent(this, MazeActivity.class);
+       /* Intent intent= new Intent(this, MazeActivity.class);
+        startActivity(intent);*/
+        super.startActivity(new Intent(this,MazeActivity.class));
 
-        startActivity(intent);
     }
 
 

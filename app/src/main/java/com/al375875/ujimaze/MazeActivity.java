@@ -1,15 +1,18 @@
 package com.al375875.ujimaze;
 
+import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 import es.uji.vj1229.framework.GameActivity;
 import es.uji.vj1229.framework.IGameController;
 
-public class MazeActivity extends GameActivity {
+public class MazeActivity extends GameActivity   {
 
     private String[] soundLabels;
     private SoundPool soundPool;
@@ -17,20 +20,36 @@ public class MazeActivity extends GameActivity {
     private int[] soundIds;
     private int[] sounds= {R.raw.ramp, R.raw.bulletproof};
 
-    /*@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.maze);
-    }*/
+
+        //setContentView(R.layout.maze);
+    }
 
     @Override
     protected IGameController buildGameController() {
         DisplayMetrics displayMetrics=new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
+
         prepareSoundPool();
 
         return new Controller(getApplicationContext(), displayMetrics.widthPixels, displayMetrics.heightPixels);
+
+    }
+
+    public void endGame(){
+
+
+        //ShowEndScreen();
+        /*Intent intent= new Intent (this, EndActivity.class);
+
+        super.startActivity(intent);*/
+    }
+    private void ShowEndScreen(View view){
+        super.startActivity(new Intent(this,EndActivity.class));
+
 
     }
 

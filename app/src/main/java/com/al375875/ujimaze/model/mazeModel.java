@@ -6,7 +6,6 @@ import android.util.Log;
 import com.al375875.ujimaze.MazeActivity;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
@@ -22,6 +21,7 @@ public class mazeModel {
 
     private final int pixelWidth, heightPixels;
     private final MazeActivity mazeActivity;
+    Context context;
 
     private float posX, posY;
     private Position posOrigin;
@@ -32,7 +32,7 @@ public class mazeModel {
     public boolean Hint;
     private Deque<Direction> lastDirections;
     private Deque<Position> lastPositions;
-    //public boolean removeTempWall;
+    public boolean gameCompelte;
 
     private boolean moving, mazeComplete, onTarget;
     static float SPEED = 2;
@@ -246,11 +246,10 @@ public class mazeModel {
 
 
     private Maze maze;
-    //private String[][] templates =Arrays.asList(maz,maz2,maz3);
 
-    private static final String[][] templateSolution = {solMaz,solMaz1,solMaz2,solMaz3,solMaz4};
+    private static final String[][] templateSolution = {solMaz/*,solMaz1,solMaz2,solMaz3,solMaz4*/};
 
-    private static final String[][] templates = {maz,maz1,maz2,maz3,maz4};
+    private static final String[][] templates = {maz/*,maz1,maz2,maz3,maz4*/};
 
     public static final Maze mazes[];
 
@@ -269,14 +268,15 @@ public class mazeModel {
     public mazeModel(Context context, int width, int height) {
         this.pixelWidth = width;
         this.heightPixels = height;
+        this.context=context;
+        gameCompelte=false;
+
         mazeActivity= new MazeActivity();
 
-        /*mazes.add(maz);
-        mazes.add(maz2);*/
         lastDirections= new ArrayDeque<Direction>();
         lastPositions= new ArrayDeque<Position>();
 
-        //maze= new Maze(templates.get(0));
+
         maze = mazes[currentLvl];
         posOrigin = new Position(maze.getOrigin());
         posX = posOrigin.getRow();
@@ -285,13 +285,8 @@ public class mazeModel {
         tarjetsOrigin = new HashSet<>();
 
         for (Position p : maze.getTargets()) {
-            //Log.d("tarjetsO","P: "+ p.toString());
             tarjetsOrigin.add(p);
         }
-
-
-        //Log.d("model", "Filas: "+maze.getNRows());
-        //Log.d("model", "Columnas: "+maze.getNCols());
 
         mazeComplete = false;
         onTarget = false;
@@ -299,9 +294,9 @@ public class mazeModel {
     }
 
     public void update(Direction dir) {
-        Log.d("stack","Stack: "+ Arrays.toString(lastDirections.toArray())+"\nLastDir: "+lastDir);
+        /*Log.d("stack","Stack: "+ Arrays.toString(lastDirections.toArray())+"\nLastDir: "+lastDir);
 
-        Log.d("update", "Last pos: "+preMovePos+ "CurrentPos"+ maze.getOrigin());
+        Log.d("update", "Last pos: "+preMovePos+ "CurrentPos"+ maze.getOrigin());*/
 
 
 
@@ -342,7 +337,7 @@ public class mazeModel {
     }
 
 
-    public void setCoords(float t, Direction dir) {
+  /*  public void setCoords(float t, Direction dir) {
 
         if (dir == UP) {
             posY = posY - (t * SPEED);
@@ -369,23 +364,19 @@ public class mazeModel {
 
         Position p=new Position((int)posX,(int)posY);
         if(maze.hasWall(p,dir)){moving=false;}
-        }*/
+        }
 
 
     }
-    //targetReached();
+    //targetReached();*/
 
 
     // Maze
     public void resetMaze(Position playerP, Collection<Position> t, Position origin, Collection<Position> resetTarjets) {
-        //Log.d("reset","Or: "+ posOrigin + " Tarjets: "+tarjetsOrigin.size());
-        //Position or= maze.getOrigin();
-        //posOrigin= new Position( maze.getOrigin());
+
         lastDirections= new ArrayDeque<Direction>();
         lastPositions= new ArrayDeque<Position>();
         playerP.set(origin);
-        //t=resetTarjets;
-
 
         for (Position p : resetTarjets) {
             t.add(p);
@@ -404,18 +395,26 @@ public class mazeModel {
 
     public void nextMaze() {
 
-        lastDirections= new ArrayDeque<Direction>();
-        lastPositions= new ArrayDeque<Position>();
-        Hint = false;
-        currentLvl += 1;
-        maze = mazes[currentLvl];
+        Log.d("next", "current: "+currentLvl+" Lenght: "+mazes.length);
+        //int a=
+        if(currentLvl+1 < mazes.length)
+        {
+            lastDirections= new ArrayDeque<Direction>();
+            lastPositions= new ArrayDeque<Position>();
+            Hint = false;
+            currentLvl += 1;
+            Log.d("next", "newcurrent: "+currentLvl+" Lenght: "+mazes.length);
 
+            maze = mazes[currentLvl];
+        }
+        else {
 
+            gameCompelte=true;
+            //mazeActivity.endGame();
+        }
     }
 
-    public void returnTargetPos() {
 
-    }
 
     //Moving around
     public float getPosX() {
@@ -449,7 +448,6 @@ public class mazeModel {
 
     public boolean targetReached(Position playerPos, Position tarjetPos) {
 
-
         if ((playerPos.getCol() == tarjetPos.getCol()) && (playerPos.getRow() == tarjetPos.getRow())) {
             onTarget = true;
         } else {
@@ -475,9 +473,7 @@ public class mazeModel {
             player.move(dir);
 
         }
-        Log.d("swipe", "Last pos: "+preMovePos+ "CurrentPos"+ maze.getOrigin());
 
-        //targetReached(player);
         moving = false;
 
         lastDirections.push(dir);
@@ -498,12 +494,10 @@ public class mazeModel {
         Set<Position> resetTarjets = new HashSet<>();
 
         for (Position p : tempMaze.getTargets()) {
-            //Log.d("tarjetsO","P: "+ p.toString());
             resetTarjets.add(p);
         }
 
 
-        Log.d("click", "Click: " + x + ", " + y);
         //Reset
         float rxMin = pixelWidth / 2 - DRAWABLE_SCALE / 1.65f;
         float rxMax = pixelWidth / 2 + DRAWABLE_SCALE / 1.65f;
@@ -521,7 +515,7 @@ public class mazeModel {
 
 
         float h = yOffset;
-        Log.d("click", "hXMin " + hxMin);
+
 
         if (x > rxMin && x < rxMax && y > yMin && y < yMax) {        //Reset
 
@@ -533,100 +527,44 @@ public class mazeModel {
         }
         if (x > uxMin && x < uxMax && y > yMin && y < yMax) {         //undo
 
-            Log.d("click", "Undo");
-
-            //mazeActivity.playSound(1);
 
             lastDir=lastDirections.peek();
+
             if(!lastDirections.isEmpty())
             {
 
 
                 if(lastDir==UP){
-                    preMovePos= new Position(player);
-
                     while(maze.getOrigin().getRow()!= lastPositions.peek().getRow()){player.move(DOWN);}
-                    Log.d("stack","Me he movido hacia abajo");
-                    lastDir=lastDirections.peek();
                 }
 
                 if(lastDir==DOWN){
-                    preMovePos= new Position(player);
-                    //while(maze.getOrigin()!= preMovePos){player.move(UP);}
                     while(maze.getOrigin().getRow()!= lastPositions.peek().getRow()){player.move(UP);}
-                    Log.d("stack","Me he movido hacia arriba");
-
-                    lastDir=lastDirections.peek();
-
-
                 }
 
                 if(lastDir==RIGHT){
-                    preMovePos= new Position(player);
                     while(maze.getOrigin().getCol()!= lastPositions.peek().getCol()){player.move(LEFT);}
-                    lastDir=lastDirections.peek();
-
-
                 }
 
                 if(lastDir==LEFT){
-                    preMovePos= new Position(player);
-
                     while(maze.getOrigin().getCol()!= lastPositions.peek().getCol()){player.move(RIGHT);}
-                    lastDir=lastDirections.peek();
-
                 }
-
+                preMovePos= new Position(player);
                 lastPositions.pop();
 
                 lastDir=lastDirections.pop();
                 lastDir=lastDirections.peek();
-
-
-
             }
-
-
-
-
-
-
-
-
         }
     }
 
     private void showPath() {
         boolean r = Hint ? false : true;
         Hint = r;
-
-        Log.d("click", "Pista");
     }
 
     public String[] getMazeDiagram() {
         return templates[currentLvl];
     }
 
-    /*public void changeTemplate(int x) {
-
-        String[] lvl = templates[currentLvl];
-        /*for (int row = 0; row < lvl.length; row++) {
-            for (int col = 0; col < lvl[row].length(); col++) {
-                if (lvl[row].charAt(col) == 'B')
-                {
-                    lvl[row].replace('b',' ');
-                }
-            }
-        }
-
-        //Log.d("bfg","a: "+templates[currentLvl][(x*2)+1]);
-        templates[currentLvl][x*2+1] = lvl[x*2+1].replace('b',' ');
-        removeTempWall=false;
-        //Log.d("bfg","b: "+templates[currentLvl][(x*2)+1]);
-        Maze updateMaze= new Maze (templates[currentLvl]);
-        mazes[currentLvl]=updateMaze;
-
-
-
-    }*/
 }

@@ -339,6 +339,8 @@ public class mazeModel {
         //Log.d("reset","Or: "+ posOrigin + " Tarjets: "+tarjetsOrigin.size());
         //Position or= maze.getOrigin();
         //posOrigin= new Position( maze.getOrigin());
+        lastDirections= new ArrayDeque<Direction>();
+        lastPositions= new ArrayDeque<Position>();
         playerP.set(origin);
         //t=resetTarjets;
 
@@ -360,6 +362,8 @@ public class mazeModel {
 
     public void nextMaze() {
 
+        lastDirections= new ArrayDeque<Direction>();
+        lastPositions= new ArrayDeque<Position>();
         Hint = false;
         currentLvl += 1;
         maze = mazes[currentLvl];

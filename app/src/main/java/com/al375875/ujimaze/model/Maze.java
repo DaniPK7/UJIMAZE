@@ -1,7 +1,5 @@
 package com.al375875.ujimaze.model;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import java.util.Collection;
@@ -27,6 +25,10 @@ public class Maze {
      * The {@code char} used for representing the targets.
      */
     public static final char TARGET = 'X';
+    private final Position tempWall;
+
+
+    public static final char TEMPWALL = 'B';
 
     private final boolean walls[][][];
     private final Position origin;
@@ -68,6 +70,7 @@ public class Maze {
         walls = new boolean[nrows][ncols][4];
 
         Position origin = null;
+        Position tempWall=null;
 
         targets = new HashSet<>();
 
@@ -79,9 +82,18 @@ public class Maze {
                 int realCol = 2 * col + 1;
                 if (current.charAt(realCol) == ORIGIN)
                     origin = new Position(row, col);
-                    Log.d("originMaze","Row: "+ row+"Col: "+col );
+                    //Log.d("originMaze","Row: "+ row+"Col: "+col+" O" );
                 if (current.charAt(realCol) == TARGET)
                     targets.add(new Position(row, col));
+
+                if(current.charAt(realCol) == TEMPWALL){
+                    tempWall=new Position(row,col);
+                   // Log.d("originMaze","Row: "+ row+"Col: "+col+" B" );
+                }
+
+                //Log.d("originMaze","Row: "+ row+"Col: "+col+" Char:\'"+current.charAt(realCol)+"\'" );
+
+
                 walls[row][col][UP.ordinal()] = previous.charAt(realCol) != ' ';
                 walls[row][col][DOWN.ordinal()] = next.charAt(realCol) != ' ';
                 walls[row][col][LEFT.ordinal()] = current.charAt(realCol - 1) != ' ';
@@ -90,6 +102,7 @@ public class Maze {
         }
 
         this.origin = origin;
+        this.tempWall=tempWall;
     }
 
     /**
@@ -99,6 +112,8 @@ public class Maze {
     public Position getOrigin() {
         return origin;
     }
+
+    public Position getTempWall(){return  tempWall;}
 
     /**
      * Getter for the positions of the targets of the maze.

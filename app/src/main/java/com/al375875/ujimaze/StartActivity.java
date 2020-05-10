@@ -12,10 +12,17 @@ public class StartActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
+
+
+
+
     }
 
     public void startGame(View view) {
         Intent intent= new Intent(this, MazeActivity.class);
+
         startActivity(intent);
     }
+
+
 }

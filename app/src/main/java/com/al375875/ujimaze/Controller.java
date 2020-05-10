@@ -59,6 +59,8 @@ public class Controller implements IGameController {
     private float cellSide, xOffset, yOffset;
 
     public Controller(Context ctx, int widthPixels, int heightPixels) {
+
+
         this.ctx = ctx;
         this.widthPixels = widthPixels;
         this.heightPixels = heightPixels;
@@ -83,6 +85,7 @@ public class Controller implements IGameController {
         //LLAMANDO A METODOS DEL MODELO
 
         //Log.d("porfi", "AIUDAME");
+        model.update(dir);
 
         for(TouchHandler.TouchEvent event: touchEvents){
             if(event.type == TouchHandler.TouchType.TOUCH_DOWN){
@@ -99,7 +102,7 @@ public class Controller implements IGameController {
                 }
                 else if(gestureDetector.onTouchUp(event.x, event.y)== GestureDetector.Gesture.CLICK){
 
-                    model.ClickManagement(event.x, event.y, yOffset, DRAWABLE_SCALE, player, tarjets);
+                    model.ClickManagement(event.x, event.y, yOffset, DRAWABLE_SCALE, player, tarjets, gestureDetector.getDir());
                     /*if(event.x>420 && event.x<620 && event.y<407){
                         //Log.d("click", "Click: "+ x +", "+y);
                         model.resetMaze(player, tarjets);
@@ -199,6 +202,7 @@ public class Controller implements IGameController {
            // Log.d("tarjeta", "Pre criba: "+tarjets.size());
             if (model.targetReached(player, t)) {
                     tarjets.remove(t);
+
                 //Log.d("tarjeta", "post criba: "+tarjets.size());
             }
             if(tarjets.size()==0){
@@ -206,8 +210,16 @@ public class Controller implements IGameController {
             }
 
 
-            else{graphics.drawRect(xTarjet + tCol, yTarjet + tRow, RECTANGLE_SIDE, RECTANGLE_SIDE, RECTANGLE_COLOR);}
+            else{
+                graphics.drawRect(xTarjet + tCol, yTarjet + tRow, RECTANGLE_SIDE, RECTANGLE_SIDE, RECTANGLE_COLOR);
+            }
         }
+
+        //Log.d("printController","maze:\n "+ model.getMazeDiagram()[9].toString()+"\n__________");
+       /* Position B= maze.getTempWall();
+        //Log.d("bc","B: "+ B);
+        if(model.removeTempWall){model.changeTemplate(B.getRow());}*/
+
 
 
         //Muros
@@ -223,6 +235,9 @@ public class Controller implements IGameController {
                 float x2    =   x1  +   cellSide;
 
                 Position pos= new Position(i,j);
+
+
+
 
 
                 //Dibujar lo que toque
@@ -312,8 +327,8 @@ public class Controller implements IGameController {
                 if(mazeSolution[i].charAt(j)=='t')
                 {
                     graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
-                    //graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
-                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+                    //graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
                     graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
 
                 }

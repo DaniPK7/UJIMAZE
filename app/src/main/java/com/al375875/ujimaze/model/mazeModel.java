@@ -202,13 +202,55 @@ public class mazeModel {
                     //        | | | | | | |
             };
 
+    static String[] maz4 = new String[]
+            {
+                    "+-+-+-+-+-+-+-+",
+                    "|     |  O|   |",      //⟵
+                    "+ + + + +-+ + +",
+                    "| |     |     |",      //⟵
+                    "+ +-+-+-+ + + +",
+                    "|    X| |   | |",      //⟵
+                    "+ + + + + +-+ +",
+                    "| |           |",      //⟵
+                    "+ +-+-+ +-+ + +",
+                    "| |   |     | |",      //⟵
+                    "+ + + +-+ + +-+",
+                    "|   |     |   |",      //⟵
+                    "+-+-+-+ + + + +",
+                    "|X            |",      //⟵
+                    "+-+-+-+-+-+-+-+"
+                    //        ^ ^ ^ ^ ^ ^ ^
+                    //        | | | | | | |
+            };
+
+    static String[] solMaz4 = new String[]
+            {
+                    "+-+-+-+-+-+-+-+",
+                    "|d l   d l d l|",      //⟵
+                    "+d+u+l+l+ +d+u+",
+                    "|d r     d l u|",      //⟵
+                    "+d+u+l+l+l+r+u+",
+                    "|d r d     u  |",      //⟵
+                    "+r+u+r+ + +u+l+",
+                    "|  l l t r r u|",      //⟵
+                    "+ + + + + + + +",
+                    "|             |",      //⟵
+                    "+ + + + + + + +",
+                    "|             |",      //⟵
+                    "+ + + + + + + +",
+                    "|             |",      //⟵
+                    "+-+-+-+-+-+-+-+"
+                    //        ^ ^ ^ ^ ^ ^ ^
+                    //        | | | | | | |
+            };
+
 
     private Maze maze;
     //private String[][] templates =Arrays.asList(maz,maz2,maz3);
 
-    private static final String[][] templateSolution = {solMaz,solMaz1,solMaz2,solMaz3};
+    private static final String[][] templateSolution = {solMaz,solMaz1,solMaz2,solMaz3,solMaz4};
 
-    private static final String[][] templates = {maz,maz1,maz2,maz3};
+    private static final String[][] templates = {maz,maz1,maz2,maz3,maz4};
 
     public static final Maze mazes[];
 

@@ -257,6 +257,7 @@ public class Controller implements IGameController {
         float y1    =   yOffset +     fila *  (cellSide/2);
 
         graphics.drawLine(x1-cellSide/2,y1,x1+cellSide/2,y1,LINE_WIDTH,0xffe3d084);*/
+        mazeSolution= model.getCurrentSolution();
 
 
         for (int i =0; i < mazeSolution.length; i++){
@@ -304,6 +305,14 @@ public class Controller implements IGameController {
                 {
                     graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
                     graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
+
+                }
+                if(mazeSolution[i].charAt(j)=='t')
+                {
+                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+                    //graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
                     graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
                     graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
 

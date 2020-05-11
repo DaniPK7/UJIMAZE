@@ -41,13 +41,15 @@ public class Controller implements IGameController {
     public Position player;
     Collection<Position> tarjets;
 
+    MazeActivity mazeActivity;
+
 
 
     float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE, DRAWABLE_SCALE  ;
 
 
     float nX,nY;
-
+    Drawable frame;
 
 
     private float cellSide, xOffset, yOffset;
@@ -63,8 +65,12 @@ public class Controller implements IGameController {
         gestureDetector= new GestureDetector(widthPixels);
 
         model= new mazeModel(ctx, widthPixels, heightPixels);
+        frame = ctx.getDrawable(R.drawable.frame_and_bg);
+
 
         mazeSolution= model.getCurrentSolution();
+
+        mazeActivity=new MazeActivity();
 
     }
 
@@ -86,7 +92,6 @@ public class Controller implements IGameController {
                 else if(gestureDetector.onTouchUp(event.x, event.y)== GestureDetector.Gesture.CLICK){
 
                     model.ClickManagement(event.x, event.y, yOffset, DRAWABLE_SCALE, player, tarjets, gestureDetector.getDir());
-
                 }
             }
         }
@@ -94,10 +99,7 @@ public class Controller implements IGameController {
 
     @Override
     public Bitmap onDrawingRequested() {
-        //LLAMANDO A LAS FUNCIONES DE DIBUJO
-
         maze= model.getCurrentMaze();
-
         player= maze.getOrigin();
         tarjets= maze.getTargets();
 
@@ -109,38 +111,15 @@ public class Controller implements IGameController {
 
         DRAWABLE_SCALE =widthPixels/8;
 
-
-
         //Offsets
         xOffset =   (widthPixels-(cellSide*maze.getNCols()))/2;
         yOffset =   (heightPixels-(cellSide*maze.getNRows()))/2;
 
         LINE_WIDTH= cellSide * 0.1f;
-        Drawable frame = ctx.getDrawable(R.drawable.frame_and_bg);
-
 
         if(!model.gameCompelte)
         {
-
-
-
-            graphics.drawDrawable(frame , 0,0 ,widthPixels, /*yOffset-LINE_WIDTH/2*/ heightPixels);
-
-            //Maze white BG
-            graphics.drawRect(xOffset, yOffset, widthPixels-(xOffset*2),heightPixels-(yOffset*2) , 0xfffffbe6);//e4f1f7);//f0ffe0
-
-
-            //boton reset
-            Drawable resetButton = ctx.getDrawable(R.drawable.reset);
-            graphics.drawDrawable(resetButton , widthPixels/2-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
-
-            //boton help
-            Drawable helpButton = ctx.getDrawable(R.drawable.help);
-            graphics.drawDrawable(helpButton , (3*widthPixels/4)-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
-
-            //boton undo
-            Drawable undoButton = ctx.getDrawable(R.drawable.undo);
-            graphics.drawDrawable(undoButton , (widthPixels/4)-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
+            drawBgAndButtons();
 
             if(model.Hint){drawSolution();}
 
@@ -230,8 +209,9 @@ public class Controller implements IGameController {
         }
         else{       //Todos los laberintos completados
             Drawable victory = ctx.getDrawable(R.drawable.victory);
-            graphics.drawDrawable(frame , 0,0 ,widthPixels, /*yOffset-LINE_WIDTH/2*/ heightPixels);
+            //Drawable frame = ctx.getDrawable(R.drawable.frame_and_bg);
 
+            graphics.drawDrawable(frame , 0,0 ,widthPixels, /*yOffset-LINE_WIDTH/2*/ heightPixels);
             graphics.drawDrawable(victory , widthPixels/2-DRAWABLE_SCALE*2.25f,heightPixels/2-DRAWABLE_SCALE*2 ,DRAWABLE_SCALE*4.5f,DRAWABLE_SCALE*2);
         }
 
@@ -241,6 +221,26 @@ public class Controller implements IGameController {
 
 
         return graphics.getFrameBuffer();
+    }
+
+    private void drawBgAndButtons() {
+        graphics.drawDrawable(frame , 0,0 ,widthPixels, /*yOffset-LINE_WIDTH/2*/ heightPixels);
+
+        //Maze white BG
+        graphics.drawRect(xOffset, yOffset, widthPixels-(xOffset*2),heightPixels-(yOffset*2) , 0xfffffbe6);//e4f1f7);//f0ffe0
+
+
+        //boton reset
+        Drawable resetButton = ctx.getDrawable(R.drawable.reset);
+        graphics.drawDrawable(resetButton , widthPixels/2-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
+
+        //boton help
+        Drawable helpButton = ctx.getDrawable(R.drawable.help);
+        graphics.drawDrawable(helpButton , (3*widthPixels/4)-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
+
+        //boton undo
+        Drawable undoButton = ctx.getDrawable(R.drawable.undo);
+        graphics.drawDrawable(undoButton , (widthPixels/4)-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
     }
 
     void drawSolution(){

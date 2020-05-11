@@ -13,9 +13,6 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
 
-
-
-
     }
 
     public void startGame(View view) {

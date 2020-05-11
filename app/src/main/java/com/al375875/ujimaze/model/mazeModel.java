@@ -1,7 +1,6 @@
 package com.al375875.ujimaze.model;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.al375875.ujimaze.MazeActivity;
 
@@ -82,41 +81,45 @@ public class mazeModel {
 
     static String[] maz1 = new String[]
             {
-                    "+-+-+-+-+-+-+-+",
-                    "|     |O      |",      //⟵   |
-                    "+ + + + +-+-+-+",
-                    "| | |   |     |",      //⟵
-                    "+ + +-+-+ +-+ +",
-                    "| | |X      | |",      //⟵
-                    "+ + + + +-+ + +",
-                    "| | |   |   | |",      //⟵
-                    "+ + +-+ + +-+ +",
-                    "| | | | |   | |",      //⟵
-                    "+ + + +-+-+-+ +",
-                    "| |   |     | |",      //⟵
-                    "+ +-+-+ + + + +",
-                    "|       |     |",      //⟵
-                    "+-+-+-+-+-+-+-+"
+                    "+-+-+-+-+-+-+-+-+",
+                    "|   |         | |",      //⟵   |
+                    "+ + +-+ + +-+ + |",
+                    "|       |       |",      //⟵
+                    "+-+ + +-+ + + + |",
+                    "|O        | |   |",      //⟵
+                    "+-+ + + + + +-+ |",
+                    "|     |         |",      //⟵
+                    "+ + + + + + + +-|",
+                    "|               |",      //⟵
+                    "+ +-+ + + + + +-|",
+                    "|         |    X|",      //⟵
+                    "+ + +-+ +-+ + + |",
+                    "| |             |",
+                    "+ + + + +-+ + + |",
+                    "|   |     |     |", //⟵
+                    "+-+-+-+-+-+-+-+-+"
                     //        ^ ^ ^ ^ ^ ^ ^
                     //        | | | | | | |
             };
     static String[] solMaz1 = new String[]
             {
-                    "+-+-+-+-+-+-+-+",
-                    "|d|l l d|     |",      //⟵
-                    "+d+ +u+l+d+l+l+",
-                    "|d     l l   u|",      //⟵
-                    "+d+ + + +-+ +u+",
-                    "|d    |     |u|",      //⟵
-                    "+d+ + +r+r+d+u+",
-                    "|r r r u| |r u|",      //⟵
-                    "+       + +  -+",
-                    "|             |",      //⟵
-                    "+-+ + + +-+   +",
-                    "|   |X|       |",      //⟵
-                    "+   +-+ +   + +",
-                    "|       |   | |",      //⟵
-                    "+-+-+-+-+-+-+-+"
+                    "+-+-+-+-+-+-+-+-+",
+                    "|   |    rrr d| |",      //⟵   |
+                    "+ + +-+ +u+-+d+ |",
+                    "|rr r rr u   r d|",      //⟵
+                    "+-+ + +d+l+l+l+l|",
+                    "|      d  | |   |",      //⟵
+                    "+-+ + +d+ + +-+ |",
+                    "|    r|cr r rr u|",      //⟵
+                    "+ + +u+l+ + + + |",
+                    "|             | |",      //⟵
+                    "+ +-+ + + + + +-|",
+                    "|         |    X|",      //⟵
+                    "+ + +-+ +-+ + + |",
+                    "| |             |",
+                    "+ + + + +-+ + +-|",
+                    "|   |     |     |", //⟵
+                    "+-+-+-+-+-+-+-+-+"
                     //        ^ ^ ^ ^ ^ ^ ^
                     //        | | | | | | |
             };
@@ -395,22 +398,19 @@ public class mazeModel {
 
     public void nextMaze() {
 
-        Log.d("next", "current: "+currentLvl+" Lenght: "+mazes.length);
-        //int a=
+
         if(currentLvl+1 < mazes.length)
         {
             lastDirections= new ArrayDeque<Direction>();
             lastPositions= new ArrayDeque<Position>();
             Hint = false;
             currentLvl += 1;
-            Log.d("next", "newcurrent: "+currentLvl+" Lenght: "+mazes.length);
 
             maze = mazes[currentLvl];
         }
         else {
 
             gameCompelte=true;
-            //mazeActivity.endGame();
         }
     }
 

@@ -42,6 +42,7 @@ public class Controller implements IGameController {
     Collection<Position> tarjets;
 
 
+
     float LINE_WIDTH,CIRCLE_RADIUS, RECTANGLE_SIDE, DRAWABLE_SCALE  ;
 
 
@@ -115,9 +116,20 @@ public class Controller implements IGameController {
         yOffset =   (heightPixels-(cellSide*maze.getNRows()))/2;
 
         LINE_WIDTH= cellSide * 0.1f;
+        Drawable frame = ctx.getDrawable(R.drawable.frame_and_bg);
+
 
         if(!model.gameCompelte)
         {
+
+
+
+            graphics.drawDrawable(frame , 0,0 ,widthPixels, /*yOffset-LINE_WIDTH/2*/ heightPixels);
+
+            //Maze white BG
+            graphics.drawRect(xOffset, yOffset, widthPixels-(xOffset*2),heightPixels-(yOffset*2) , 0xfffffbe6);//e4f1f7);//f0ffe0
+
+
             //boton reset
             Drawable resetButton = ctx.getDrawable(R.drawable.reset);
             graphics.drawDrawable(resetButton , widthPixels/2-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
@@ -130,8 +142,12 @@ public class Controller implements IGameController {
             Drawable undoButton = ctx.getDrawable(R.drawable.undo);
             graphics.drawDrawable(undoButton , (widthPixels/4)-DRAWABLE_SCALE/2,yOffset/2 - DRAWABLE_SCALE/2,DRAWABLE_SCALE,DRAWABLE_SCALE);
 
+            if(model.Hint){drawSolution();}
+
             //Player
             CIRCLE_RADIUS =cellSide/3.5f;
+            float playerSCALEX= cellSide/1.6f;
+            float playerSCALEY= cellSide/1.5f;
             float xOrigin   =   xOffset + cellSide/2;
             float yOrigin   =   yOffset + cellSide/2;
 
@@ -141,7 +157,10 @@ public class Controller implements IGameController {
             float pCol= nX* cellSide;
             float pRow= nY* cellSide;
 
-            graphics.drawCircle(xOrigin + pCol , yOrigin + pRow, CIRCLE_RADIUS, CIRCLE_COLOR);
+            Drawable playerPNG = ctx.getDrawable(R.drawable.player);
+            graphics.drawDrawable(playerPNG , (xOrigin + pCol)-playerSCALEX/2,(yOrigin + pRow)-playerSCALEY/2, playerSCALEX, playerSCALEY);
+
+            //graphics.drawCircle(xOrigin + pCol , yOrigin + pRow, CIRCLE_RADIUS, CIRCLE_COLOR);
 
             //Tarjet
             RECTANGLE_SIDE=cellSide/1.5f;
@@ -167,7 +186,10 @@ public class Controller implements IGameController {
                 }
 
                 else{
-                    graphics.drawRect(xTarjet + tCol, yTarjet + tRow, RECTANGLE_SIDE, RECTANGLE_SIDE, RECTANGLE_COLOR);
+
+                    Drawable tarjetPNG = ctx.getDrawable(R.drawable.tarjet);
+                    graphics.drawDrawable(tarjetPNG ,(xTarjet + tCol), (yTarjet + tRow), RECTANGLE_SIDE, RECTANGLE_SIDE);
+                    //graphics.drawRect(xTarjet + tCol, yTarjet + tRow, RECTANGLE_SIDE, RECTANGLE_SIDE, RECTANGLE_COLOR);
                 }
             }
             //Muros
@@ -204,10 +226,11 @@ public class Controller implements IGameController {
                 }
             }
 
-            if(model.Hint){drawSolution();}
+
         }
-        else{
+        else{       //Todos los laberintos completados
             Drawable victory = ctx.getDrawable(R.drawable.victory);
+            graphics.drawDrawable(frame , 0,0 ,widthPixels, /*yOffset-LINE_WIDTH/2*/ heightPixels);
 
             graphics.drawDrawable(victory , widthPixels/2-DRAWABLE_SCALE*2.25f,heightPixels/2-DRAWABLE_SCALE*2 ,DRAWABLE_SCALE*4.5f,DRAWABLE_SCALE*2);
         }
@@ -222,6 +245,7 @@ public class Controller implements IGameController {
 
     void drawSolution(){
         mazeSolution= model.getCurrentSolution();
+        int COLOR_HELP=0xffcc4637;
 
 
         for (int i =0; i < mazeSolution.length; i++){
@@ -234,36 +258,36 @@ public class Controller implements IGameController {
 
                 if(mazeSolution[i].charAt(j)=='r')
                 {
-                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,COLOR_HELP);
                 }
 
                 if(mazeSolution[i].charAt(j)=='l')
                 {
-                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,COLOR_HELP);
                 }
 
                 if(mazeSolution[i].charAt(j)=='d')
                 {
-                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,COLOR_HELP);
                 }
 
                 if(mazeSolution[i].charAt(j)=='u')
                 {
-                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,COLOR_HELP);
                 }
                 if(mazeSolution[i].charAt(j)=='c')
                 {
-                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
-                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
-                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,0xffe3d084);
-                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,COLOR_HELP);
+                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,COLOR_HELP);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1+cellSide/2, LINE_WIDTH,COLOR_HELP);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,COLOR_HELP);
 
                 }
                 if(mazeSolution[i].charAt(j)=='t')
                 {
-                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
-                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,0xffe3d084);
-                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,0xffe3d084);
+                    graphics.drawLine(x1,y1-cellSide/2,x1+cellSide,y1-cellSide/2,LINE_WIDTH,COLOR_HELP);
+                    graphics.drawLine(x1,y1-cellSide/2,x1-cellSide,y1-cellSide/2,LINE_WIDTH,COLOR_HELP);
+                    graphics.drawLine(x1,y1-cellSide/2, x1, y1-cellSide*1.5f, LINE_WIDTH,COLOR_HELP);
 
                 }
 

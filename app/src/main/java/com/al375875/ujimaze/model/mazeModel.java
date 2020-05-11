@@ -211,7 +211,7 @@ public class mazeModel {
                     "+ +-+-+-+ + + +",
                     "|    X| |   | |",      //⟵
                     "+ + + + + +-+ +",
-                    "| |           |",      //⟵
+                    "| |       |   |",      //⟵
                     "+ +-+-+ +-+ + +",
                     "| |   |     | |",      //⟵
                     "+ + + +-+ + +-+",
@@ -247,9 +247,9 @@ public class mazeModel {
 
     private Maze maze;
 
-    private static final String[][] templateSolution = {solMaz/*,solMaz1,solMaz2,solMaz3,solMaz4*/};
+    private static final String[][] templateSolution = {solMaz,solMaz1,solMaz2,solMaz3,solMaz4};
 
-    private static final String[][] templates = {maz/*,maz1,maz2,maz3,maz4*/};
+    private static final String[][] templates = {maz,maz1,maz2,maz3,maz4};
 
     public static final Maze mazes[];
 

@@ -208,6 +208,7 @@ public class Controller implements IGameController {
         }
         else{
             Drawable victory = ctx.getDrawable(R.drawable.victory);
+
             graphics.drawDrawable(victory , widthPixels/2-DRAWABLE_SCALE*2.25f,heightPixels/2-DRAWABLE_SCALE*2 ,DRAWABLE_SCALE*4.5f,DRAWABLE_SCALE*2);
         }
 
